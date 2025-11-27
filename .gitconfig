@@ -1,0 +1,39 @@
+# This is Git's per-user configuration file.
+[user]
+	name = LaTable007
+	email = noah.dubuc@gmail.com
+# Please adapt and uncomment the following lines:
+#	name = noah dubuc
+#	email = noahdubuc@Lord-Noam.local
+[core]
+	editor = nvim
+	autocrlf = input
+	pager = delta
+
+[difftool]
+    prompt = true
+[diff]
+	tool = nvimdiff
+	colorMoved = default
+[difftool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true    # use n and N to move between diff sections
+    side-by-side = true
+
+
+    # delta detects terminal colors automatically; set one of these to disable auto-detection
+    # dark = true
+    # light = true
+
+[merge]
+    conflictstyle = diff3
