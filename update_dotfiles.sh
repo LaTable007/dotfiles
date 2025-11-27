@@ -25,19 +25,27 @@ echo ""
 echo "--- 3. Mise à jour de aerospace ---"
 brew upgrade --cask nikitabobko/tap/aerospace || { echo "⚠️ Erreur lors de la mise à jour de aerospace."; }
 
+echo ""
+echo "--- 4. Mise à jour de sketchybar ---"
+brew upgrade sketchybar || { echo "⚠️ Erreur lors de la mise à jour de sketchybar."; }
+
 # 4. Mise à jour des polices (Fonts)
 # Assurez-vous d'utiliser le nom exact de la police dans brew.
 # Remplacer 'font-nom_de_votre_police' par le nom réel de votre police.
 # Exemple pour une police Nerd Font : font-hack-nerd-font
 echo ""
-echo "--- 4. Mise à jour de sketchybarfont ---"
+echo "--- 5. Mise à jour de sketchybarfont ---"
 brew upgrade --cask font-sketchybar-app-font || { echo "⚠️ Erreur lors de la mise à jour de sketchybar-app-font."; }
 # Alternative si les polices sont gérées par Cask :
 # brew upgrade --cask $(brew list --cask | grep 'font')
 
+echo ""
+echo "--- 6. Mise à jour de starship ---"
+brew upgrade starship || { echo "⚠️ Erreur lors de la mise à jour de starship."; }
+
 # 5. Nettoyage de Homebrew
 echo ""
-echo "--- 5. Nettoyage et Finalisation ---"
+echo "--- 7. Nettoyage et Finalisation ---"
 brew cleanup
 
 echo ""
