@@ -6,9 +6,11 @@ require("items.mode")
 require("items.media")
 
 -- Right side: added in reverse of the desired left-to-right reading order
--- (datetime, volume) so the final layout reads, left to right:
--- cpu / ram / temperature / battery / volume / date+time
+-- (datetime first, so it ends up rightmost) so the final layout reads,
+-- left to right:
+-- cpu / ram / temperature / battery / audio output / volume / date+time
 require("items.datetime")
 require("items.volume")
+require("items.audio_output")
 require("items.battery")
 require("items.system_stats") -- adds temperature, ram, cpu (in that order)
