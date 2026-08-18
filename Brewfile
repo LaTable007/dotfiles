@@ -66,8 +66,6 @@ brew "jq"
 brew "tlrc"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
-# Pluggable terminal workspace, with terminal multiplexer as the base feature
-brew "zellij"
 # Blazing fast terminal file manager written in Rust
 brew "yazi"
 # 7-Zip is a file archiver with a high compression ratio (aperçus yazi)
