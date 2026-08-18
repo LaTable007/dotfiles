@@ -2,3 +2,11 @@ theme = Gruvbox Dark
 font-family =  MesloLGS NF 
 background-opacity = 0.75
 background-blur-radius = 10
+
+# Shader GLSL appliqué au rendu du terminal. Le chemin est relatif à ce dossier ;
+# plusieurs directives custom-shader s'empilent dans l'ordre de déclaration.
+custom-shader = ghostty-shaders/bloom.glsl
+# false fige le rendu quand rien ne bouge à l'écran : les shaders animés
+# (bettercrt, inside-the-matrix, galaxy, starfield, water) tourneraient sinon
+# en continu sur le GPU, ce qui se paie sur l'autonomie.
+custom-shader-animation = false
