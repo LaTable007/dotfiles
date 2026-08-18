@@ -1,21 +1,24 @@
 local colors = require("colors")
 
--- Equivalent to the --default domain
 sbar.default({
-  padding_left = 5,
-  padding_right = 5,
+  padding_left = 4,
+  padding_right = 4,
   icon = {
-    font = "Hack Nerd Font:Bold:17.0",
-    color = colors.TEXT_GREY,
-    padding_left = 4,
+    font = "Hack Nerd Font:Bold:14.0",
+    color = colors.FG1,
+    padding_left = 8,
     padding_right = 4,
   },
   label = {
-    font = "SF Pro:Semibold:17.0",
-    color = colors.TEXT_GREY,
-    padding_left = 4,
-    padding_right = 4,
+    font = "SF Pro:Semibold:13.0",
+    color = colors.FG1,
+    padding_left = 2,
+    padding_right = 8,
+  },
+  background = {
+    height = 26,
+    corner_radius = 8,
+    color = colors.TRANSPARENT,
   },
   updates = "on",
-  y_offset = -3,
 })

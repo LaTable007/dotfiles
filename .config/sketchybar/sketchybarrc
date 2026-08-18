@@ -1,4 +1,4 @@
-#!/usr/bin/env lua
+#!/opt/homebrew/opt/lua@5.4/bin/lua
 
 -- Add sketchybar module to package path
 package.cpath = package.cpath .. ";/Users/" .. os.getenv("USER") .. "/.local/share/sketchybar_lua/?.so"
