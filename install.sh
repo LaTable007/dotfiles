@@ -20,6 +20,11 @@ stow --target="$HOME" --restow home
 echo "--- Plugin manager tmux ---"
 [ -d ~/.tmux/plugins/tpm ] || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
+echo "--- Thème et plugins yazi ---"
+# flavors/ et plugins/ ne sont pas versionnés : ya pkg les reclone depuis
+# le manifeste package.toml.
+command -v ya >/dev/null && ya pkg install
+
 echo "--- Module Lua pour SketchyBar ---"
 # SbarLua n'est pas distribué par Homebrew : la config sketchybar/ est en Lua
 # et ne démarre pas sans ce module.

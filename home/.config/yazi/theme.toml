@@ -1,0 +1,5 @@
+# Le thème vient d'un flavor, déclaré dans package.toml et installé par
+# `ya pkg install` (voir install.sh). Le dossier flavors/ n'est pas versionné :
+# c'est du code tiers cloné, au même titre que les plugins tmux.
+[flavor]
+dark = "gruvbox-dark"

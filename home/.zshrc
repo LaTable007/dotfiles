@@ -38,6 +38,20 @@ export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
+# mise n'intercepte que les outils qu'il gère : tant que Python n'y est pas
+# déclaré, pyenv continue de s'en occuper et les deux cohabitent sans conflit.
+eval "$(mise activate zsh)"
+
+# Wrapper officiel de yazi : sans lui, quitter yazi ramène dans le dossier de
+# départ au lieu de celui où l'on a navigué.
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
+}
+
 
 fastfetch
 

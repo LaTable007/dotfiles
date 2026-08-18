@@ -46,8 +46,6 @@ brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 # Terminal multiplexer
 brew "tmux"
-# Pluggable terminal workspace, with terminal multiplexer as the base feature
-brew "zellij"
 # Modern, maintained replacement for ls
 brew "eza"
 # Clone of cat(1) with syntax highlighting and Git integration
@@ -68,6 +66,12 @@ brew "jq"
 brew "tlrc"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
+# Pluggable terminal workspace, with terminal multiplexer as the base feature
+brew "zellij"
+# Blazing fast terminal file manager written in Rust
+brew "yazi"
+# 7-Zip is a file archiver with a high compression ratio (aperçus yazi)
+brew "sevenzip"
 
 # --- Éditeur ------------------------------------------------------------
 # Ambitious Vim-fork focused on extensibility and agility
@@ -102,6 +106,8 @@ brew "gcc"
 brew "node"
 # Python version management
 brew "pyenv"
+# Polyglot runtime manager
+brew "mise"
 # Interpreted, interactive, object-oriented programming language
 brew "python@3.12"
 # Container runtimes on MacOS (and Linux) with minimal setup

@@ -13,6 +13,11 @@ home/.config/nvim/lazy-lock.json.bak
 # Neovim
 home/.config/nvim/.netrwhist
 
+# yazi : flavors et plugins sont du code tiers cloné par `ya pkg install`,
+# que install.sh rejoue depuis package.toml.
+home/.config/yazi/flavors/
+home/.config/yazi/plugins/
+
 # tmux : filet de sécurité. tmux.conf fixe TMUX_PLUGIN_MANAGER_PATH hors du
 # repo, mais sans cette variable tpm installerait ici, dans le dépôt.
 home/.config/tmux/plugins/

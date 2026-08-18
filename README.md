@@ -19,6 +19,8 @@ Thème Gruvbox Dark sur l'ensemble de la pile.
 | `ls` | [eza](https://github.com/eza-community/eza) |
 | Recherche floue | [fzf](https://github.com/junegunn/fzf) |
 | Navigation de dossiers | [zoxide](https://github.com/ajeetdsouza/zoxide) |
+| Gestionnaire de fichiers | [yazi](https://github.com/sxyazi/yazi) |
+| Versions de langages | [mise](https://github.com/jdx/mise) |
 | Pager git | [delta](https://github.com/dandavison/delta) |
 | Métriques CPU/GPU | [macmon](https://github.com/vladkens/macmon) |
 
@@ -274,6 +276,20 @@ durée en millisecondes, pas en secondes.
 La pochette n'est réextraite qu'au changement de piste, et écrite
 alternativement dans `~/.cache/sketchybar/artwork0.jpg` et `artwork1.jpg` pour
 qu'un cache interne sur le chemin ne resserve pas l'image précédente.
+
+### Thème et plugins yazi
+
+Comme pour tmux, la configuration est versionnée mais pas le code tiers :
+`flavors/` et `plugins/` sont ignorés, et `install.sh` les reclone avec
+`ya pkg install` depuis `package.toml`, qui épingle la révision exacte du
+flavor Gruvbox.
+
+### mise et pyenv
+
+Les deux cohabitent volontairement. `mise` n'intercepte que les outils qu'il
+gère : tant que Python n'y est pas déclaré, `pyenv` continue de s'en occuper.
+Pour migrer, `mise use -g python@3.14` puis retirer l'appel à `pyenv init` du
+`.zshrc`.
 
 ### Plugins tmux
 
