@@ -13,7 +13,9 @@ local mode = sbar.add("item", "aerospace_mode", {
     padding_right = 8,
   },
   background = {
-    color = colors.GREEN,
+    -- AQUA, not GREEN: matches the TEMP tag on the right so the bar carries a
+    -- single green. RED still marks service mode.
+    color = colors.AQUA,
     corner_radius = 8,
     height = 24,
   },
@@ -26,7 +28,7 @@ local function refresh()
 
     mode:set({
       label = { string = current:upper() },
-      background = { color = is_service and colors.RED or colors.GREEN },
+      background = { color = is_service and colors.RED or colors.AQUA },
     })
   end)
 end
