@@ -5,6 +5,7 @@ sbar.add("bracket", "rightItems", {
   "ram",
   "temperature",
   "battery",
+  "audio_output",
   "volume",
   "datetime",
 }, {

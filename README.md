@@ -226,6 +226,25 @@ Les arguments passés en ligne de commande priment sur
 argument. Les deux fichiers sont gardés identiques pour qu'aucun des deux
 chemins ne donne un résultat différent, mais `aerospace.toml` fait foi.
 
+### Lecteur média
+
+L'item central affiche la pochette et la piste en cours, et sert d'ancre à un
+popup de contrôles (précédent / lecture-pause / suivant).
+
+SketchyBar sait normalement faire cela nativement, via l'événement
+`media_change` et l'image intégrée `media.artwork`. Les deux sont inutilisables
+sur macOS 26 : Apple a fermé l'API MediaRemote, et même
+`sketchybar --trigger media_change` reste sans effet. Le relevé passe donc par
+`nowplaying-cli`, sondé toutes les 5 secondes.
+
+La pochette n'est réextraite qu'au changement de piste, et écrite alternativement
+dans `~/.cache/sketchybar/artwork0.jpg` et `artwork1.jpg` pour qu'un cache
+interne sur le chemin ne resserve pas l'image précédente.
+
+Pas d'indicateur lecture/pause : sur cette version de macOS, `playbackRate`
+renvoie l'état précédent et `elapsedTime` reste bloqué à 0. Seules les
+métadonnées sont fiables. Les commandes de lecture, elles, fonctionnent.
+
 ### Plugins tmux
 
 Les clones de plugins vivent dans `~/.tmux/plugins/`, hors du repo, fixé par
