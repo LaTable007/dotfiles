@@ -1,3 +1,4 @@
-theme = Catppuccin Mocha
+theme = Gruvbox Dark
 font-family =  MesloLGS NF 
-background-opacity = 1.0
+background-opacity = 0.75
+background-blur-radius = 10
