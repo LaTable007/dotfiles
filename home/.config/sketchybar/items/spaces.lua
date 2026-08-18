@@ -18,6 +18,9 @@ end
 
 sbar.add("event", "aerospace_workspace_change")
 
+-- Synchrone est acceptable ici : on est au chargement de la barre, avant que
+-- l'event loop ne tourne, donc rien à bloquer. Tout le reste passe par
+-- sbar.exec (voir refresh).
 local all_workspaces = exec_lines("aerospace list-workspaces --all")
 local space_items = {}
 
@@ -45,20 +48,7 @@ for _, sid in ipairs(all_workspaces) do
   })
 end
 
--- Only show workspaces that have windows, plus whichever one is currently focused.
--- Each visible workspace also lists the apps open in it, via sketchybar-app-font.
-local function refresh()
-  local focused = exec("aerospace list-workspaces --focused")
-
-  local apps_by_workspace = {}
-  for _, line in ipairs(exec_lines("aerospace list-windows --all --format '%{workspace}|%{app-name}'")) do
-    local sid, app_name = line:match("^([^|]*)|(.*)$")
-    if sid and app_name then
-      apps_by_workspace[sid] = apps_by_workspace[sid] or {}
-      table.insert(apps_by_workspace[sid], app_name)
-    end
-  end
-
+local function render(focused, apps_by_workspace)
   for _, sid in ipairs(all_workspaces) do
     local is_focused = sid == focused
     local apps = apps_by_workspace[sid]
@@ -80,6 +70,49 @@ local function refresh()
       background = { color = is_focused and colors.HIGHLIGHT or colors.TRANSPARENT },
     })
   end
+end
+
+-- front_app_switched part en rafale quand on enchaîne les changements de
+-- fenêtre. Sans garde-fou, chaque événement lancerait deux `aerospace` de plus
+-- et les réponses arriveraient dans le désordre. On n'en garde qu'un en vol et
+-- on note qu'un rafraîchissement supplémentaire est dû, rejoué à la fin.
+local in_flight = false
+local pending = false
+
+-- N'affiche que les workspaces qui ont des fenêtres, plus celui qui a le focus.
+-- Chaque workspace visible liste aussi ses applications, via sketchybar-app-font.
+local function refresh()
+  if in_flight then
+    pending = true
+    return
+  end
+  in_flight = true
+
+  -- io.popen bloquerait l'event loop de la barre le temps de forker deux
+  -- process aerospace, à chaque changement de fenêtre. sbar.exec rend la main
+  -- immédiatement et rappelle le callback quand la commande a fini.
+  sbar.exec("aerospace list-workspaces --focused", function(focused_out)
+    local focused = focused_out:gsub("%s+$", "")
+
+    sbar.exec("aerospace list-windows --all --format '%{workspace}|%{app-name}'", function(windows_out)
+      local apps_by_workspace = {}
+      for line in windows_out:gmatch("[^\r\n]+") do
+        local sid, app_name = line:match("^([^|]*)|(.*)$")
+        if sid and app_name then
+          apps_by_workspace[sid] = apps_by_workspace[sid] or {}
+          table.insert(apps_by_workspace[sid], app_name)
+        end
+      end
+
+      render(focused, apps_by_workspace)
+
+      in_flight = false
+      if pending then
+        pending = false
+        refresh()
+      end
+    end)
+  end)
 end
 
 refresh()
