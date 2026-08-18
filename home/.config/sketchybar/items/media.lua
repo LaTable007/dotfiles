@@ -15,8 +15,9 @@ local CACHE = HOME .. "/.cache/sketchybar"
 os.execute("mkdir -p '" .. CACHE .. "'")
 
 -- Seul Music est géré : l'API AppleScript de Spotify exprime la durée en
--- millisecondes et demanderait sa propre branche. Pour toute autre source, le
--- compteur se masque et pochette et titre restent affichés.
+-- millisecondes et demanderait sa propre branche. Toute autre source masque
+-- l'item entier, voir sync_metadata.
+local MUSIC_BUNDLE = "com.apple.Music"
 local POSITION_QUERY = "osascript '" .. HOME .. "/.config/sketchybar/helpers/music_position.applescript'"
 
 -- L'item bat à la seconde pour que le compteur défile, mais n'interroge le
@@ -169,8 +170,11 @@ local function sync_metadata()
     end
     local title, bundle = fields[1], fields[3]
 
-    -- nowplaying-cli renvoie "null" quand aucune application ne diffuse.
-    if not title or title == "" or title == "null" then
+    -- Rien à afficher dans deux cas : aucune application ne diffuse, auquel cas
+    -- nowplaying-cli renvoie "null", ou la source n'est pas Music. Un
+    -- navigateur ou Spotify donnerait bien un titre, mais pas de position :
+    -- plutôt que d'afficher une piste au compteur vide, l'item disparaît.
+    if not title or title == "" or title == "null" or bundle ~= MUSIC_BUNDLE then
       hide()
       return
     end
@@ -183,12 +187,7 @@ local function sync_metadata()
       sync_artwork()
     end
 
-    if bundle == "com.apple.Music" then
-      sync_position()
-    else
-      player.known = false
-      render_time()
-    end
+    sync_position()
   end)
 end
 

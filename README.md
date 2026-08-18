@@ -262,9 +262,14 @@ reviendrait avec une virgule décimale, que le `tonumber()` de Lua rejette. Il
 teste aussi `is running` avant tout `tell`, sans quoi il lancerait Music à
 chaque relevé si l'application était fermée.
 
-Spotify n'est pas géré : son API AppleScript exprime la durée en millisecondes
-et demanderait sa propre branche. Pour toute autre source que Music, le
-compteur se masque et pochette et titre restent affichés.
+L'item ne s'affiche que si Music est la source. Un navigateur ou Spotify
+donnerait bien un titre via `nowplaying-cli`, mais pas de position : une vidéo
+YouTube apparaissait alors avec son titre et la pochette du morceau précédent,
+l'extraction d'image échouant sans que l'ancienne soit retirée. Plutôt que de
+rattraper ce cas, toute source autre que Music masque l'item entier.
+
+Ajouter Spotify demanderait sa propre branche : son API AppleScript exprime la
+durée en millisecondes, pas en secondes.
 
 La pochette n'est réextraite qu'au changement de piste, et écrite
 alternativement dans `~/.cache/sketchybar/artwork0.jpg` et `artwork1.jpg` pour
