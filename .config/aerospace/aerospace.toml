@@ -23,9 +23,14 @@ after-login-command = []
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
-#after-startup-command = [
-#  'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0'
-#]
+# Focused-window indicator. AeroSpace has none natively, JankyBorders draws it.
+# Launching it here (rather than as a brew service) keeps a single source of
+# truth: these arguments win over ~/.config/borders/bordersrc, which is only
+# read when borders is started without arguments.
+# Colors are the Gruvbox YELLOW (= HIGHLIGHT in sketchybar/colors.lua) and BG1.
+after-startup-command = [
+  'exec-and-forget borders active_color=0xfffabd2f inactive_color=0xff3c3836 width=5.0 style=round hidpi=off'
+]
 # Start AeroSpace at login
 start-at-login = true
 
