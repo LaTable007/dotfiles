@@ -5,13 +5,13 @@
 # Secrets et état local
 # hosts.yml ne contient pas de token aujourd'hui (gh passe par le Keychain),
 # mais `gh auth login --insecure-storage` en écrirait un en clair.
-.config/gh/hosts.yml
-.config/nvim/lazy-lock.json.bak
+home/.config/gh/hosts.yml
+home/.config/nvim/lazy-lock.json.bak
 *.local
 *.secret
 
 # Neovim
-.config/nvim/.netrwhist
+home/.config/nvim/.netrwhist
 
 # tmux : tpm et les plugins sont clonés par install.sh
-.config/tmux/plugins/
+home/.config/tmux/plugins/

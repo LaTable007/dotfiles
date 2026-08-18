@@ -1,0 +1,33 @@
+#!/bin/bash
+# Installe les paquets puis déploie les dotfiles par symlinks GNU Stow.
+#
+# À lancer une seule fois sur une machine neuve. Stow refuse d'écraser un
+# fichier existant : sauvegarder au préalable les configurations déjà en
+# place (voir la section « Installation » du README). Ce script ne supprime
+# rien de lui-même, c'est délibéré.
+set -euo pipefail
+
+cd "$(dirname "$0")"
+
+command -v brew >/dev/null || { echo "Homebrew requis"; exit 1; }
+
+echo "--- Installation des paquets ---"
+brew bundle install --file=Brewfile
+
+echo "--- Déploiement des symlinks ---"
+stow --target="$HOME" --restow home
+
+echo "--- Plugin manager tmux ---"
+[ -d ~/.tmux/plugins/tpm ] || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+echo "--- Module Lua pour SketchyBar ---"
+# SbarLua n'est pas distribué par Homebrew : la config sketchybar/ est en Lua
+# et ne démarre pas sans ce module.
+if [ ! -f ~/.local/share/sketchybar_lua/sketchybar.so ]; then
+  tmp=$(mktemp -d)
+  git clone https://github.com/FelixKratz/SbarLua.git "$tmp/SbarLua"
+  (cd "$tmp/SbarLua" && make install)
+  rm -rf "$tmp"
+fi
+
+echo "Terminé. Redémarrer la session pour appliquer."
