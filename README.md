@@ -226,21 +226,6 @@ Les arguments passés en ligne de commande priment sur
 argument. Les deux fichiers sont gardés identiques pour qu'aucun des deux
 chemins ne donne un résultat différent, mais `aerospace.toml` fait foi.
 
-### Shaders Ghostty
-
-`home/.config/ghostty/ghostty-shaders/` contient 30 shaders GLSL. Un seul est
-chargé, via `custom-shader` dans `home/.config/ghostty/config` ; le chemin est
-relatif au dossier de configuration, et plusieurs directives `custom-shader`
-s'empilent dans l'ordre de déclaration.
-
-`custom-shader-animation = false` fige le rendu quand rien ne change à l'écran.
-Les shaders animés (`bettercrt`, `inside-the-matrix`, `galaxy`, `starfield`,
-`water`) tourneraient sinon en continu sur le GPU. Pour en utiliser un, passer
-la directive à `true` et mesurer la consommation avec `macmon` avant de garder.
-
-Si le terminal reste noir après un changement de shader, celui-ci est
-incompatible : `bloom.glsl` et `glow-rgbsplit-twitchy.glsl` sont les plus sûrs.
-
 ### Secrets
 
 `home/.config/gh/hosts.yml` est ignoré par Git. Il ne contient pas de token
