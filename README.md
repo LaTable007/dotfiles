@@ -228,22 +228,44 @@ chemins ne donne un résultat différent, mais `aerospace.toml` fait foi.
 
 ### Lecteur média
 
-L'item central affiche la pochette et la piste en cours, et sert d'ancre à un
-popup de contrôles (précédent / lecture-pause / suivant).
+L'item central affiche la pochette, la piste en cours et un compteur
+`position / durée` avec l'état de lecture.
 
 SketchyBar sait normalement faire cela nativement, via l'événement
 `media_change` et l'image intégrée `media.artwork`. Les deux sont inutilisables
 sur macOS 26 : Apple a fermé l'API MediaRemote, et même
-`sketchybar --trigger media_change` reste sans effet. Le relevé passe donc par
-`nowplaying-cli`, sondé toutes les 5 secondes.
+`sketchybar --trigger media_change` reste sans effet. Deux sources se partagent
+donc le travail :
 
-La pochette n'est réextraite qu'au changement de piste, et écrite alternativement
-dans `~/.cache/sketchybar/artwork0.jpg` et `artwork1.jpg` pour qu'un cache
-interne sur le chemin ne resserve pas l'image précédente.
+| Source | Donnée | Portée |
+| --- | --- | --- |
+| `nowplaying-cli` | titre, artiste, pochette | toute application |
+| `helpers/music_position.applescript` | position, durée, état | Music uniquement |
 
-Pas d'indicateur lecture/pause : sur cette version de macOS, `playbackRate`
-renvoie l'état précédent et `elapsedTime` reste bloqué à 0. Seules les
-métadonnées sont fiables. Les commandes de lecture, elles, fonctionnent.
+MediaRemote expose bien une position, mais inexploitable : sa clé
+`ElapsedTime` ne se rafraîchit qu'aux transitions lecture/pause, `PlaybackRate`
+renvoie l'état précédent, et aucun horodatage ne permet d'extrapoler. Le
+raccourci `nowplaying-cli get elapsedTime` renvoie en plus toujours 0, alors
+que la clé brute, elle, porte une valeur. AppleScript reste exact.
+
+L'item bat à la seconde pour que le compteur défile, mais n'interroge le
+système que toutes les 5 secondes : entre deux relevés la position est
+extrapolée en Lua, sans lancer un seul processus. En contrepartie, une pause
+survenue entre deux relevés peut laisser le compteur avancer jusqu'à cinq
+secondes de trop avant de se corriger.
+
+Le script AppleScript impose des entiers : en locale française, un réel
+reviendrait avec une virgule décimale, que le `tonumber()` de Lua rejette. Il
+teste aussi `is running` avant tout `tell`, sans quoi il lancerait Music à
+chaque relevé si l'application était fermée.
+
+Spotify n'est pas géré : son API AppleScript exprime la durée en millisecondes
+et demanderait sa propre branche. Pour toute autre source que Music, le
+compteur se masque et pochette et titre restent affichés.
+
+La pochette n'est réextraite qu'au changement de piste, et écrite
+alternativement dans `~/.cache/sketchybar/artwork0.jpg` et `artwork1.jpg` pour
+qu'un cache interne sur le chemin ne resserve pas l'image précédente.
 
 ### Plugins tmux
 
