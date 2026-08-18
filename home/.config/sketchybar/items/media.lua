@@ -29,13 +29,19 @@ local cover = sbar.add("item", "media.cover", {
   position = "center",
   drawing = "off",
   update_freq = 1,
+  -- Marge gauche plus large que le padding par défaut : la pastille du bracket
+  -- a un rayon d'arrondi de 10, et une pochette collée au bord verrait ses
+  -- coins carrés ressortir de la courbe.
+  padding_left = 7,
+  padding_right = 2,
   icon = { drawing = "off" },
   label = { drawing = "off" },
   background = {
-    -- La pochette fait 600 px de côté ; 0.04 la ramène à 24, la hauteur des items.
-    image = { scale = 0.04, drawing = "on" },
+    -- Les pochettes font 600 px de côté ; 0.036 les ramène à 22, ce qui laisse
+    -- 4 px de respiration de chaque côté dans la pastille de 30.
+    image = { scale = 0.036, corner_radius = 4, drawing = "on" },
     color = colors.TRANSPARENT,
-    height = 24,
+    height = 22,
   },
 })
 
