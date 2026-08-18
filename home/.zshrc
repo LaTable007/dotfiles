@@ -20,6 +20,14 @@ alias ls='eza -1 -a --long --group-directories-first --icons'
 # Gruvbox Dark (eza reads ~/.config/eza/theme.yml automatically; EZA_COLORS/LS_COLORS would override it, so none set here)
 export FZF_DEFAULT_OPTS='--color=bg+:#3c3836,bg:#32302f,spinner:#fb4934,hl:#928374,fg:#ebdbb2,header:#928374,info:#8ec07c,pointer:#fb4934,marker:#fb4934,fg+:#ebdbb2,prompt:#fb4934,hl+:#fb4934'
 
+# Sans cette ligne, FZF_DEFAULT_OPTS ne sert à rien : les raccourcis Ctrl-R
+# (historique) et Ctrl-T (fichiers) ne sont jamais installés.
+source <(fzf --zsh)
+
+# --cmd cd remplace cd par zoxide, qui garde le comportement standard quand
+# l'argument est un vrai chemin et complète par fréquence sinon.
+eval "$(zoxide init zsh --cmd cd)"
+
 
 
 export DBUS_SESSION_BUS_ADDRESS="unix:path=$DBUS_LAUNCHD_SESSION_BUS_SOCKET"
