@@ -1,19 +1,21 @@
 local colors = require("colors")
 
 sbar.default({
-  padding_left = 4,
-  padding_right = 4,
+  -- Marges volontairement serrées : entre deux items voisins, l'écart total
+  -- vaut label.padding_right + padding_right + padding_left + icon.padding_left.
+  padding_left = 2,
+  padding_right = 2,
   icon = {
     font = "Hack Nerd Font:Bold:14.0",
     color = colors.FG1,
-    padding_left = 8,
-    padding_right = 4,
+    padding_left = 5,
+    padding_right = 3,
   },
   label = {
     font = "SF Pro:Semibold:13.0",
     color = colors.FG1,
     padding_left = 2,
-    padding_right = 8,
+    padding_right = 5,
   },
   background = {
     height = 26,

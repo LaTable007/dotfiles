@@ -42,14 +42,16 @@ local info = sbar.add("item", "media.info", {
   position = "center",
   drawing = "off",
   icon = { drawing = "off" },
-  label = { max_chars = 40, padding_left = 8, padding_right = 4 },
+  -- Titre seul, sans l'artiste : la pochette juste à gauche le donne déjà,
+  -- et le couple faisait déborder la cellule sur la moitié de la barre.
+  label = { max_chars = 24, padding_left = 6, padding_right = 2 },
 })
 
 local time = sbar.add("item", "media.time", {
   position = "center",
   drawing = "off",
-  icon = { font = "Hack Nerd Font:Regular:11.0", padding_left = 4, padding_right = 4 },
-  label = { font = "SF Mono:Regular:11.0", color = colors.GREY, padding_right = 12 },
+  icon = { font = "Hack Nerd Font:Regular:11.0", padding_left = 4, padding_right = 2 },
+  label = { font = "SF Mono:Regular:11.0", color = colors.GREY, padding_right = 8 },
 })
 
 sbar.add("bracket", "media", { cover.name, info.name, time.name }, {
@@ -165,7 +167,7 @@ local function sync_metadata()
     for line in out:gmatch("([^\r\n]*)\r?\n?") do
       table.insert(fields, (line:gsub("%s+$", "")))
     end
-    local title, artist, bundle = fields[1], fields[2], fields[3]
+    local title, bundle = fields[1], fields[3]
 
     -- nowplaying-cli renvoie "null" quand aucune application ne diffuse.
     if not title or title == "" or title == "null" then
@@ -173,13 +175,8 @@ local function sync_metadata()
       return
     end
 
-    local text = title
-    if artist and artist ~= "" and artist ~= "null" then
-      text = artist .. " \u{2014} " .. title
-    end
-
     cover:set({ drawing = "on" })
-    info:set({ drawing = "on", label = { string = text } })
+    info:set({ drawing = "on", label = { string = title } })
 
     if title ~= track.title then
       track.title = title
