@@ -226,6 +226,15 @@ Les arguments passés en ligne de commande priment sur
 argument. Les deux fichiers sont gardés identiques pour qu'aucun des deux
 chemins ne donne un résultat différent, mais `aerospace.toml` fait foi.
 
+### Plugins tmux
+
+Les clones de plugins vivent dans `~/.tmux/plugins/`, hors du repo, fixé par
+`TMUX_PLUGIN_MANAGER_PATH` dans `tmux.conf`.
+
+Sans cette variable, tpm déduit le chemin de l'emplacement de `tmux.conf` et
+installe dans `~/.config/tmux/plugins/`. Comme ce dossier est un lien vers le
+repo, les clones atterriraient dans le dépôt.
+
 ### Secrets
 
 `home/.config/gh/hosts.yml` est ignoré par Git. Il ne contient pas de token

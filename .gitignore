@@ -13,5 +13,6 @@ home/.config/nvim/lazy-lock.json.bak
 # Neovim
 home/.config/nvim/.netrwhist
 
-# tmux : tpm et les plugins sont clonés par install.sh
+# tmux : filet de sécurité. tmux.conf fixe TMUX_PLUGIN_MANAGER_PATH hors du
+# repo, mais sans cette variable tpm installerait ici, dans le dépôt.
 home/.config/tmux/plugins/
