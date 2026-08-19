@@ -291,6 +291,27 @@ gère : tant que Python n'y est pas déclaré, `pyenv` continue de s'en occuper.
 Pour migrer, `mise use -g python@3.14` puis retirer l'appel à `pyenv init` du
 `.zshrc`.
 
+### Autorisation Music après une mise à jour
+
+Le compteur de position interroge Music par AppleScript, ce qui exige
+l'autorisation « Automatisation » de macOS. Celle-ci est liée à la signature du
+binaire : chaque mise à jour de SketchyBar en produit une nouvelle, et
+l'autorisation tombe.
+
+Le piège est que le processus déjà lancé garde ce refus en cache et échoue
+silencieusement — titre et pochette continuent de s'afficher, seul le compteur
+disparaît, et aucune invite n'apparaît. Il faut redémarrer le processus pour que
+macOS redemande. `update_dotfiles.sh` s'en charge après chaque `brew upgrade`.
+
+En cas de doute, l'état se vérifie ainsi :
+
+```bash
+osascript ~/.config/sketchybar/helpers/music_position.applescript
+```
+
+Une erreur `-1743` signale le refus. Un `brew services restart sketchybar`
+déclenche alors l'invite.
+
 ### Plugins tmux
 
 Les clones de plugins vivent dans `~/.tmux/plugins/`, hors du repo, fixé par

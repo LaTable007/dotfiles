@@ -18,4 +18,15 @@ brew upgrade
 echo "--- Nettoyage ---"
 brew cleanup
 
+# Une mise à jour de SketchyBar remplace son binaire, donc sa signature. macOS
+# y voit une application inconnue et l'autorisation d'envoyer des évènements
+# Apple à Music tombe, ce qui casse le compteur de position du lecteur média.
+# Le processus déjà lancé garde ce refus en cache et échoue en silence : sans
+# redémarrage, aucune invite n'apparaît jamais. Le relancer ici force macOS à
+# redemander l'autorisation, au moment où l'on est devant l'écran.
+if brew services list 2>/dev/null | grep -q '^sketchybar'; then
+  echo "--- Redémarrage de SketchyBar (autorisation Music) ---"
+  brew services restart sketchybar
+fi
+
 echo "Terminé."
