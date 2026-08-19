@@ -249,7 +249,8 @@ sur l'item décale par ailleurs son label dans sa boîte, ce qui casse aussi
 l'alignement.
 
 Cette largeur vaut celle de la plus longue des deux lignes, estimée caractère
-par caractère. Une largeur moyenne unique ne suffit pas : SF Pro est
+par caractère, plus une gouttière réglée pour que l'espace avant le compteur
+égale celui qui sépare la pochette du texte. Une largeur moyenne unique ne suffit pas : SF Pro est
 proportionnelle, et un titre tout en capitales est bien plus large qu'un titre
 en casse mixte de même longueur — c'est ce qui le faisait déborder sur le
 compteur. L'estimation pondère les caractères étroits, larges et capitales, et

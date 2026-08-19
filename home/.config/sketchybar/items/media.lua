@@ -33,7 +33,7 @@ local ARTIST_MAX = 24
 -- Marge gauche du label, plus un espace avant le compteur : sans elle, la
 -- cellule s'arrête pile à la fin du texte et le titre touche le chronomètre.
 -- Réglée pour que cet espace égale celui qui sépare la pochette du texte.
-local TEXT_GUTTER = 9
+local TEXT_GUTTER = 6
 
 -- Estimation de la largeur d'un texte, en fractions du corps de la police.
 -- Une moyenne unique par caractère ne suffit pas : SF Pro est proportionnelle,
