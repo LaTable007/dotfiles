@@ -233,13 +233,21 @@ chemins ne donne un résultat différent, mais `aerospace.toml` fait foi.
 L'item central affiche la pochette, l'artiste et le titre sur deux lignes, et
 un compteur `position / durée` avec l'état de lecture.
 
-Les deux lignes tiennent dans une barre de 34 px parce que l'item artiste porte
-`width = 0` : il ne compte pas dans le flux horizontal, son label déborde et se
-dessine par-dessus le titre, ajouté juste après et qui fixe la largeur de la
-cellule. Les `y_offset` opposés les séparent verticalement. Cette largeur est
-fixe et non dynamique, sans quoi un nom d'artiste plus long que le titre
-déborderait sur le compteur ; elle évite aussi que la cellule saute à chaque
-changement de piste.
+Les deux lignes tiennent dans une barre de 34 px parce que **ni l'une ni l'autre
+ne compte dans le flux horizontal** : toutes deux portent `width = 0` et se
+dessinent donc au même point, ce qui les aligne à gauche. Les `y_offset` opposés
+les séparent verticalement.
+
+C'est un troisième item, vide et placé après elles, qui réserve la largeur de la
+cellule. Ce détour est nécessaire : un item à largeur nulle dessine à sa position
+dans le flux, donc si l'une des deux lignes portait la largeur, l'autre serait
+repoussée d'autant et l'alignement à gauche serait perdu. Une largeur fixe posée
+sur l'item décale par ailleurs son label dans sa boîte, ce qui casse aussi
+l'alignement.
+
+Cette largeur vaut celle de la plus longue des deux lignes, plafonnée. Au-delà
+du plafond, `max_chars` prend le relais et la ligne trop longue défile — l'autre,
+qui tient, reste immobile.
 
 Un texte trop long défile plutôt que d'être coupé, via `scroll_texts` et
 `label.max_chars`. Deux points non documentés, trouvés à l'écran : l'animation

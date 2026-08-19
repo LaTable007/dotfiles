@@ -25,6 +25,15 @@ local POSITION_QUERY = "osascript '" .. HOME .. "/.config/sketchybar/helpers/mus
 -- extrapolée en Lua, sans lancer un seul process.
 local SYNC_EVERY = 5
 
+-- Largeurs moyennes d'un caractère, mesurées à l'écran pour chacune des deux
+-- polices, et plafond de la cellule au-delà duquel le texte défile.
+local TITLE_CHAR = 6.1
+local ARTIST_CHAR = 5.4
+local MAX_TEXT_WIDTH = 150
+-- Marge gauche du label, plus un espace avant le compteur : sans elle, la
+-- cellule s'arrête pile à la fin du texte et le titre touche le chronomètre.
+local TEXT_GUTTER = 16
+
 local cover = sbar.add("item", "media.cover", {
   position = "center",
   drawing = "off",
@@ -63,7 +72,7 @@ local artist = sbar.add("item", "media.artist", {
     color = colors.GREY,
     -- Le défilement se déclenche sur max_chars, et seulement là : avec un
     -- label.width fixe l'animation ne part jamais, vérifié à l'écran.
-    max_chars = 24,
+    max_chars = 28,
     scroll_duration = 180,
     y_offset = 7,
     padding_left = 6,
@@ -74,22 +83,30 @@ local artist = sbar.add("item", "media.artist", {
 local title_item = sbar.add("item", "media.title", {
   position = "center",
   drawing = "off",
+  width = 0,
   scroll_texts = "on",
-  -- Largeur fixée sur l'item, et non sur le label : un label.width fige le
-  -- défilement, une largeur d'item non. Elle réserve la cellule, de sorte que
-  -- l'artiste, qui ne compte pas dans le flux, ne déborde plus sur le compteur
-  -- quand son nom est plus long que le titre.
-  width = 140,
   icon = { drawing = "off" },
   label = {
     font = "SF Pro:Bold:11.0",
-    max_chars = 20,
+    max_chars = 24,
     scroll_duration = 180,
     color = colors.FG1,
     y_offset = -5,
     padding_left = 6,
     padding_right = 2,
   },
+})
+
+-- Ni l'artiste ni le titre ne comptent dans le flux horizontal : tous deux sont
+-- à largeur nulle et se dessinent donc au même point, ce qui les aligne à
+-- gauche. Un item à largeur nulle dessine à sa position dans le flux, si bien
+-- que le second serait repoussé par la largeur du premier si l'un des deux la
+-- portait. C'est donc cet item vide, placé après eux, qui réserve la cellule.
+local spacer = sbar.add("item", "media.spacer", {
+  position = "center",
+  drawing = "off",
+  icon = { drawing = "off" },
+  label = { drawing = "off" },
 })
 
 local time = sbar.add("item", "media.time", {
@@ -99,7 +116,7 @@ local time = sbar.add("item", "media.time", {
   label = { font = "SF Mono:Regular:11.0", color = colors.GREY, padding_right = 8 },
 })
 
-sbar.add("bracket", "media", { cover.name, artist.name, title_item.name, time.name }, {
+sbar.add("bracket", "media", { cover.name, artist.name, title_item.name, spacer.name, time.name }, {
   background = {
     color = colors.PILL_BG,
     corner_radius = 10,
@@ -123,6 +140,7 @@ local function hide()
   cover:set({ drawing = "off" })
   artist:set({ drawing = "off" })
   title_item:set({ drawing = "off" })
+  spacer:set({ drawing = "off" })
   time:set({ drawing = "off" })
 end
 
@@ -224,12 +242,19 @@ local function sync_metadata()
       return
     end
 
+    local shown_artist = (artist_name ~= "" and artist_name ~= "null") and artist_name or ""
+
+    -- Largeur de la cellule : celle de la plus longue des deux lignes, plafonnée.
+    -- Au-delà du plafond, max_chars prend le relais et la ligne trop longue
+    -- défile — l'autre, qui tient, reste immobile. Les largeurs par caractère
+    -- sont des moyennes mesurées à l'écran ; les polices étant
+    -- proportionnelles, quelques pixels d'écart sont sans conséquence.
+    local width = math.min(MAX_TEXT_WIDTH, math.max(#title * TITLE_CHAR, #shown_artist * ARTIST_CHAR))
+
     cover:set({ drawing = "on" })
     title_item:set({ drawing = "on", label = { string = title } })
-    artist:set({
-      drawing = "on",
-      label = { string = (artist_name ~= "" and artist_name ~= "null") and artist_name or "" },
-    })
+    artist:set({ drawing = "on", label = { string = shown_artist } })
+    spacer:set({ drawing = "on", width = math.floor(width) + TEXT_GUTTER })
 
     if title ~= track.title then
       track.title = title
