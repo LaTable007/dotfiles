@@ -245,9 +245,19 @@ repoussée d'autant et l'alignement à gauche serait perdu. Une largeur fixe pos
 sur l'item décale par ailleurs son label dans sa boîte, ce qui casse aussi
 l'alignement.
 
-Cette largeur vaut celle de la plus longue des deux lignes, plafonnée. Au-delà
-du plafond, `max_chars` prend le relais et la ligne trop longue défile — l'autre,
-qui tient, reste immobile.
+Cette largeur vaut celle de la plus longue des deux lignes, estimée caractère
+par caractère. Une largeur moyenne unique ne suffit pas : SF Pro est
+proportionnelle, et un titre tout en capitales est bien plus large qu'un titre
+en casse mixte de même longueur — c'est ce qui le faisait déborder sur le
+compteur. L'estimation pondère les caractères étroits, larges et capitales, et
+applique un facteur de graisse, le titre étant en gras et l'artiste en
+demi-gras.
+
+Elle n'est pas plafonnée : plafonner ne servait à rien puisque le texte n'est
+borné qu'en nombre de caractères, pas en pixels, si bien qu'une ligne sous le
+plafond pouvait quand même le dépasser à l'écran. C'est `max_chars` qui borne la
+cellule, en bornant ce qui est dessiné, et qui fait défiler la ligne trop longue
+— l'autre, qui tient, reste immobile.
 
 Un texte trop long défile plutôt que d'être coupé, via `scroll_texts` et
 `label.max_chars`. Deux points non documentés, trouvés à l'écran : l'animation

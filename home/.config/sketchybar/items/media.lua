@@ -25,14 +25,55 @@ local POSITION_QUERY = "osascript '" .. HOME .. "/.config/sketchybar/helpers/mus
 -- extrapolée en Lua, sans lancer un seul process.
 local SYNC_EVERY = 5
 
--- Largeurs moyennes d'un caractère, mesurées à l'écran pour chacune des deux
--- polices, et plafond de la cellule au-delà duquel le texte défile.
-local TITLE_CHAR = 6.1
-local ARTIST_CHAR = 5.4
-local MAX_TEXT_WIDTH = 150
+-- Nombre maximal de caractères affichés par ligne. Au-delà, SketchyBar tronque
+-- et fait défiler.
+local TITLE_MAX = 20
+local ARTIST_MAX = 24
+
 -- Marge gauche du label, plus un espace avant le compteur : sans elle, la
 -- cellule s'arrête pile à la fin du texte et le titre touche le chronomètre.
 local TEXT_GUTTER = 16
+
+-- Estimation de la largeur d'un texte, en fractions du corps de la police.
+-- Une moyenne unique par caractère ne suffit pas : SF Pro est proportionnelle,
+-- et un titre tout en capitales est nettement plus large qu'un titre en casse
+-- mixte de même longueur. C'est ce qui faisait déborder « REPENT NOW CONFESS
+-- NOW » sur le compteur.
+local NARROW = "[ilIjftr%.,;:!|%(%)%[%]'\"]"
+local WIDE = "[MWmw@]"
+local UPPER_OR_DIGIT = "[A-Z0-9]"
+
+-- Le titre est en gras et l'artiste en demi-gras : à corps égal le gras est
+-- plus large. Le facteur a été calé sur des largeurs relevées à l'écran.
+local BOLD = 1.15
+local SEMIBOLD = 1.0
+
+local function text_width(text, size, weight, max_chars)
+  -- On mesure le texte réellement dessiné, donc tronqué à max_chars : au-delà,
+  -- SketchyBar n'affiche pas plus large, il fait défiler.
+  local shown = text
+  if utf8.len(text) and utf8.len(text) > max_chars then
+    shown = text:sub(1, utf8.offset(text, max_chars + 1) - 1)
+  end
+
+  local width = 0
+  for char in shown:gmatch(utf8.charpattern) do
+    local factor
+    if char == " " then
+      factor = 0.31
+    elseif char:match(NARROW) then
+      factor = 0.33
+    elseif char:match(WIDE) then
+      factor = 1.05
+    elseif char:match(UPPER_OR_DIGIT) then
+      factor = 0.73
+    else
+      factor = 0.61
+    end
+    width = width + factor * size * weight
+  end
+  return width
+end
 
 local cover = sbar.add("item", "media.cover", {
   position = "center",
@@ -72,7 +113,7 @@ local artist = sbar.add("item", "media.artist", {
     color = colors.GREY,
     -- Le défilement se déclenche sur max_chars, et seulement là : avec un
     -- label.width fixe l'animation ne part jamais, vérifié à l'écran.
-    max_chars = 28,
+    max_chars = ARTIST_MAX,
     scroll_duration = 180,
     y_offset = 7,
     padding_left = 6,
@@ -88,7 +129,7 @@ local title_item = sbar.add("item", "media.title", {
   icon = { drawing = "off" },
   label = {
     font = "SF Pro:Bold:11.0",
-    max_chars = 24,
+    max_chars = TITLE_MAX,
     scroll_duration = 180,
     color = colors.FG1,
     y_offset = -5,
@@ -244,12 +285,15 @@ local function sync_metadata()
 
     local shown_artist = (artist_name ~= "" and artist_name ~= "null") and artist_name or ""
 
-    -- Largeur de la cellule : celle de la plus longue des deux lignes, plafonnée.
-    -- Au-delà du plafond, max_chars prend le relais et la ligne trop longue
-    -- défile — l'autre, qui tient, reste immobile. Les largeurs par caractère
-    -- sont des moyennes mesurées à l'écran ; les polices étant
-    -- proportionnelles, quelques pixels d'écart sont sans conséquence.
-    local width = math.min(MAX_TEXT_WIDTH, math.max(#title * TITLE_CHAR, #shown_artist * ARTIST_CHAR))
+    -- Largeur de la cellule : celle de la plus longue des deux lignes, sans
+    -- plafond. Plafonner ne servait à rien et nuisait : le texte n'est borné
+    -- qu'en nombre de caractères, pas en pixels, donc une ligne sous le plafond
+    -- pouvait quand même le dépasser à l'écran et recouvrir le compteur.
+    -- C'est max_chars qui borne la cellule, en bornant ce qui est dessiné.
+    local width = math.max(
+      text_width(title, 11, BOLD, TITLE_MAX),
+      text_width(shown_artist, 9, SEMIBOLD, ARTIST_MAX)
+    )
 
     cover:set({ drawing = "on" })
     title_item:set({ drawing = "on", label = { string = title } })
