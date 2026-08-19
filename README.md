@@ -327,10 +327,11 @@ du tracé à un quart d'opacité, l'alpha étant l'octet de poids fort d'une cou
 Un clic sur la date ouvre le mois courant, construit en Lua plutôt que repris de
 `cal`, pour maîtriser l'alignement et marquer le jour.
 
-Les cellules font trois caractères et le jour courant est préfixé d'un point :
-`•19` tient dans la même largeur que ` 19`, donc marquer le jour ne décale
-aucune colonne. Un encadrement `[19]` aurait demandé un caractère de plus par
-cellule, et les dernières colonnes sortaient alors de l'écran.
+Le jour courant est entouré, via les caractères Unicode déjà cerclés : ① à ⑳
+occupent U+2460 à U+2473, puis ㉑ à ㉟ reprennent à U+3251. Ces glyphes sont de
+chasse double, donc ` ⑲` occupe exactement les trois colonnes d'une cellule et
+l'alignement du tableau tient. Un encadrement `[19]` aurait demandé une colonne
+de plus, et les derniers jours sortaient de l'écran.
 
 Le popup est ancré à droite et non centré : l'item date touche le bord de
 l'écran, et un popup centré sur lui déborde. Le dernier jour du mois vient de

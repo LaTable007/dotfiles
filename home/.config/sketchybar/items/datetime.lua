@@ -55,10 +55,19 @@ for i = 1, CALENDAR_ROWS do
   })
 end
 
--- Cellules de 3 caractères. Le jour courant est préfixé d'un point plutôt
--- qu'encadré : "•19" tient dans la même largeur que " 19", là où "[19]" en
--- demandait quatre. L'item date étant collé au bord droit de l'écran, chaque
--- caractère gagné évite que les dernières colonnes sortent du cadre.
+-- Le jour courant est entouré, via les caractères Unicode déjà cerclés : ① à ⑳
+-- occupent U+2460 à U+2473, puis ㉑ à ㉟ reprennent à U+3251. Ces glyphes sont
+-- de chasse double, donc " ⑲" occupe exactement les trois colonnes d'une
+-- cellule et l'alignement du tableau tient. Un encadrement "[19]" aurait
+-- demandé une colonne de plus, et les derniers jours sortaient de l'écran.
+local function circled(day)
+  if day <= 20 then
+    return utf8.char(0x2460 + day - 1)
+  end
+  return utf8.char(0x3251 + day - 21)
+end
+
+-- Cellules de 3 caractères.
 local function build_calendar(now)
   local t = os.date("*t", now)
   local first = os.time({ year = t.year, month = t.month, day = 1, hour = 12 })
@@ -79,7 +88,7 @@ local function build_calendar(now)
     filled = filled + 1
   end
   for day = 1, last.day do
-    table.insert(week, day == t.day and ("\u{2022}" .. string.format("%2d", day)) or string.format("%3d", day))
+    table.insert(week, day == t.day and (" " .. circled(day)) or string.format("%3d", day))
     filled = filled + 1
     if filled == 7 then
       table.insert(lines, table.concat(week))
@@ -127,3 +136,5 @@ end)
 
 datetime:subscribe({ "routine", "forced", "system_woke" }, refresh)
 refresh()
+
+
