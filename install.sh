@@ -25,6 +25,20 @@ echo "--- Thème et plugins yazi ---"
 # le manifeste package.toml.
 command -v ya >/dev/null && ya pkg install
 
+echo "--- Event provider réseau ---"
+# Binaire qui pousse l'événement network_update à SketchyBar. Son code est sous
+# GPL : il n'est pas versionné ici, mais compilé depuis la source amont, pour ne
+# pas faire entrer cette licence dans ce dépôt.
+if [ ! -x "$HOME/.local/share/sketchybar/bin/network_load" ]; then
+  tmp=$(mktemp -d)
+  git clone --depth 1 https://github.com/FelixKratz/dotfiles.git "$tmp/upstream"
+  provider="$tmp/upstream/.config/sketchybar/helpers/event_providers/network_load"
+  (cd "$provider" && make)
+  mkdir -p "$HOME/.local/share/sketchybar/bin"
+  cp "$provider/bin/network_load" "$HOME/.local/share/sketchybar/bin/"
+  rm -rf "$tmp"
+fi
+
 echo "--- Module Lua pour SketchyBar ---"
 # SbarLua n'est pas distribué par Homebrew : la config sketchybar/ est en Lua
 # et ne démarre pas sans ce module.

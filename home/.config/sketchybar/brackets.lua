@@ -6,6 +6,8 @@ sbar.add("bracket", "rightItems", {
   "temperature",
   "battery",
   "network",
+  "network.up",
+  "network.down",
   "audio_output",
   "volume",
   "datetime",

@@ -355,6 +355,16 @@ devient alors la seule protection. La détection compare les octets
 numériquement plutôt que par motif de texte, où `172.16` et `172.160` seraient
 faciles à confondre, et couvre RFC1918, loopback, lien-local et CGNAT.
 
+Le débit montant et descendant s'affiche sur deux lignes superposées, à côté du
+glyphe. Gris au repos, coloré dès qu'il passe quelque chose.
+
+La donnée vient d'un *event provider* : un binaire compilé qui interroge
+l'interface et pousse l'événement `network_update` toutes les deux secondes,
+plutôt que d'être sondé depuis Lua. Son code est sous GPL, donc il n'est pas
+versionné ici : `install.sh` le compile depuis la source amont et l'installe
+dans `~/.local/share/sketchybar/bin/`, ce qui évite de faire entrer cette
+licence dans ce dépôt.
+
 Un clic ouvre le détail : réseau, adresse, portée, routeur et état du pare-feu.
 Ces commandes, `networksetup` surtout, sont plus lentes que la lecture de l'IP
 et ne tournent qu'à l'ouverture du popup.

@@ -9,6 +9,54 @@ local colors = require("colors")
 
 local FIREWALL = "/usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate"
 
+-- Débit montant et descendant. La donnée vient d'un event provider compilé,
+-- un binaire qui interroge l'interface et pousse l'événement network_update
+-- toutes les deux secondes. Il n'est pas versionné : son code est sous GPL,
+-- install.sh le compile depuis la source amont.
+local PROVIDER = os.getenv("HOME") .. "/.local/share/sketchybar/bin/network_load"
+
+-- killall d'abord : un rechargement de configuration laisserait sinon tourner
+-- un exemplaire par rechargement, chacun poussant ses propres événements.
+sbar.exec("killall network_load >/dev/null 2>&1; '" .. PROVIDER .. "' en0 network_update 2.0")
+
+local rate_label = {
+  font = "SF Mono:Bold:9.0",
+  padding_left = 0,
+  padding_right = 0,
+}
+
+-- Même superposition que l'artiste et le titre du lecteur : l'item du haut
+-- porte width = 0 et ne compte pas dans le flux, celui du bas fixe la largeur.
+local upload = sbar.add("item", "network.up", {
+  position = "right",
+  width = 0,
+  y_offset = 5,
+  icon = { string = "\u{2191}", font = "SF Mono:Bold:9.0", padding_left = 6, padding_right = 1 },
+  label = rate_label,
+})
+
+local download = sbar.add("item", "network.down", {
+  position = "right",
+  y_offset = -5,
+  icon = { string = "\u{2193}", font = "SF Mono:Bold:9.0", padding_left = 6, padding_right = 1 },
+  label = rate_label,
+})
+
+-- Gris au repos, coloré dès qu'il passe quelque chose : l'œil ne retient que
+-- les moments d'activité.
+upload:subscribe("network_update", function(env)
+  local idle_up = env.upload == "000 Bps"
+  local idle_down = env.download == "000 Bps"
+  upload:set({
+    icon = { color = idle_up and colors.GREY or colors.RED },
+    label = { string = env.upload, color = idle_up and colors.GREY or colors.RED },
+  })
+  download:set({
+    icon = { color = idle_down and colors.GREY or colors.BLUE },
+    label = { string = env.download, color = idle_down and colors.GREY or colors.BLUE },
+  })
+end)
+
 local network = sbar.add("item", "network", {
   position = "right",
   icon = { color = colors.YELLOW },
