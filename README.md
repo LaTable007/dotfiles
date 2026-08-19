@@ -14,6 +14,8 @@ Thème Gruvbox Dark sur l'ensemble de la pile.
 | Gestionnaire de fenêtres | [AeroSpace](https://github.com/nikitabobko/AeroSpace) |
 | Barre de statut | [SketchyBar](https://github.com/FelixKratz/SketchyBar) + [SbarLua](https://github.com/FelixKratz/SbarLua) |
 | Bordure de fenêtre focalisée | [JankyBorders](https://github.com/FelixKratz/JankyBorders) |
+| Bascule entre fenêtres | [AltTab](https://github.com/lwouis/alt-tab-macos) |
+| Gestes du trackpad | [BetterTouchTool](https://folivora.ai) |
 | Terminal | [Ghostty](https://ghostty.org) |
 | Éditeur | [Neovim](https://neovim.io) + [LazyVim](https://www.lazyvim.org) |
 | Multiplexeur | [tmux](https://github.com/tmux/tmux) + [tpm](https://github.com/tmux-plugins/tpm) |
@@ -435,6 +437,17 @@ ouverture de shell, donc l'adresse se retrouvait sur toute capture d'écran du
 terminal. Sur un réseau domestique elle est privée et sans intérêt, mais
 certains réseaux attribuent une IPv4 publique directement à la machine — l'item
 réseau la signale alors en orange — et elle serait partie dans ce dépôt.
+
+### Autorisations d'accessibilité
+
+AltTab et BetterTouchTool pilotent d'autres applications : macOS leur demande
+donc l'autorisation « Accessibilité ». Comme pour l'accès de SketchyBar à Music,
+cette autorisation est liée à la signature du binaire, et une mise à jour la
+fait redemander.
+
+Leur configuration vit dans leurs préférences macOS, pas dans un fichier de ce
+dépôt : elle n'est donc pas versionnée. BetterTouchTool est par ailleurs un
+logiciel payant, avec une période d'essai.
 
 ### Autorisation Music après une mise à jour
 

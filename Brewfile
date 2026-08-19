@@ -16,6 +16,10 @@ brew "felixkratz/formulae/sketchybar", trusted: true
 brew "felixkratz/formulae/borders"
 # Utility to hide menu bar items
 cask "hiddenbar"
+# Alternative to macOS Command-Tab, switching windows rather than apps
+cask "alt-tab"
+# Trackpad and mouse gestures, bound here to AeroSpace commands
+cask "bettertouchtool"
 # Tool that provides consistent, highly configurable symbols for apps
 cask "sf-symbols"
 cask "font-hack-nerd-font"
@@ -48,8 +52,6 @@ brew "zsh-syntax-highlighting"
 brew "tmux"
 # Modern, maintained replacement for ls
 brew "eza"
-# Clone of cat(1) with syntax highlighting and Git integration
-brew "bat"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # Simple, fast and user-friendly alternative to find
@@ -62,8 +64,6 @@ brew "zoxide"
 brew "fastfetch"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
-# Official tldr client written in Rust
-brew "tlrc"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
 # Blazing fast terminal file manager written in Rust
@@ -86,12 +86,8 @@ brew "luarocks"
 # --- Git ----------------------------------------------------------------
 # GitHub command-line tool
 brew "gh"
-# Open-source GitLab command-line tool
-brew "glab"
 # Syntax-highlighting pager for git and diff output
 brew "git-delta"
-# Simple terminal UI for git commands
-brew "lazygit"
 
 # --- Chaîne de développement --------------------------------------------
 # Cross-platform make
@@ -111,7 +107,7 @@ brew "python@3.12"
 # Container runtimes on MacOS (and Linux) with minimal setup
 brew "colima"
 # Pack, ship and run any application as a lightweight container
-brew "docker", link: false
+brew "docker"
 # Isolated development environments using Docker
 brew "docker-compose"
 
