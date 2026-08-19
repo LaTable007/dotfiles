@@ -333,6 +333,13 @@ chasse double, donc ` ⑲` occupe exactement les trois colonnes d'une cellule et
 l'alignement du tableau tient. Un encadrement `[19]` aurait demandé une colonne
 de plus, et les derniers jours sortaient de l'écran.
 
+Aucune ligne ne commence par une espace, et les cellules sont cadrées à gauche
+pour cette raison : SketchyBar n'affiche rien d'une étiquette qui débute par des
+espaces. La valeur est pourtant bien stockée — une requête la renvoie intacte —
+mais le rendu la laisse vide. Les espaces typographiques et insécables ne
+changent rien. Le décalage de la première semaine est donc rendu par une marge
+en pixels plutôt que par des cellules vides.
+
 Le popup est ancré à droite et non centré : l'item date touche le bord de
 l'écran, et un popup centré sur lui déborde. Le dernier jour du mois vient de
 `os.time` sur le jour 0 du mois suivant, ce qui évite une table des longueurs de
