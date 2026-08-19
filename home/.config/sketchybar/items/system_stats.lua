@@ -14,6 +14,13 @@ local tag_font = "SF Pro:Heavy:10.0"
 -- d'historique visible.
 local GRAPH_WIDTH = 40
 
+-- Remplissage sous la courbe : même teinte que le tracé, à un quart d'opacité.
+-- L'octet de poids fort d'une couleur 0xAARRGGBB est son alpha ; on le remplace
+-- sans toucher aux trois octets de teinte.
+local function translucent(color)
+  return (color % 0x1000000) + 0x40000000
+end
+
 -- Superposé au tracé : width 0 pour que le label ne réserve aucune place, et
 -- y_offset pour le remonter au-dessus de la courbe.
 local overlay_label = {
@@ -33,16 +40,18 @@ local temperature = sbar.add("item", "temperature", {
 
 local ram = sbar.add("graph", "ram", GRAPH_WIDTH, {
   position = "right",
-  graph = { color = colors.BLUE },
-  background = { height = 22, color = colors.TRANSPARENT, drawing = "on" },
+  graph = { color = colors.BLUE, fill_color = translucent(colors.BLUE) },
+  -- Fond explicitement éteint : laissé actif, il dessinait un rectangle gris
+  -- autour du tracé, visible surtout quand la valeur reste haute.
+  background = { drawing = "off" },
   icon = { string = "RAM", font = tag_font, color = colors.BLUE },
   label = overlay_label,
 })
 
 local cpu = sbar.add("graph", "cpu", GRAPH_WIDTH, {
   position = "right",
-  graph = { color = colors.PURPLE },
-  background = { height = 22, color = colors.TRANSPARENT, drawing = "on" },
+  graph = { color = colors.PURPLE, fill_color = translucent(colors.PURPLE) },
+  background = { drawing = "off" },
   icon = { string = "CPU", font = tag_font, color = colors.PURPLE },
   label = overlay_label,
 })

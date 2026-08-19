@@ -306,6 +306,22 @@ gère : tant que Python n'y est pas déclaré, `pyenv` continue de s'en occuper.
 Pour migrer, `mise use -g python@3.14` puis retirer l'appel à `pyenv init` du
 `.zshrc`.
 
+### Graphes CPU et RAM
+
+CPU et RAM sont des items de type `graph` plutôt que du texte seul : le
+pourcentage dit l'instant, la courbe dit la tendance. Le pourcentage se
+superpose au tracé via `width = 0` et un `y_offset`, donc à encombrement égal.
+
+Quarante points échantillonnés toutes les cinq secondes, soit un peu plus de
+trois minutes d'historique. L'historique repart de zéro à chaque rechargement de
+SketchyBar : la courbe met donc ce même temps à se remplir après un
+`sketchybar --reload`.
+
+Le fond de l'item est explicitement éteint ; laissé actif, il dessinait un
+rectangle gris autour du tracé. Le remplissage sous la courbe reprend la teinte
+du tracé à un quart d'opacité, l'alpha étant l'octet de poids fort d'une couleur
+`0xAARRGGBB`.
+
 ### Item réseau
 
 Repris de l'item réseau de la configuration de l'auteur de SketchyBar, avec une
