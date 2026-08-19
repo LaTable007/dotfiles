@@ -241,10 +241,15 @@ fixe et non dynamique, sans quoi un nom d'artiste plus long que le titre
 déborderait sur le compteur ; elle évite aussi que la cellule saute à chaque
 changement de piste.
 
-La troncature est faite en Lua, pas par `max_chars`, qui coupe net sans rien
-signaler et fait passer le résultat pour un défaut d'affichage. `utf8.offset`
-plutôt qu'un sous-chaînage d'octets, sinon une lettre accentuée serait tranchée
-en deux.
+Un texte trop long défile plutôt que d'être coupé, via `scroll_texts` et
+`label.max_chars`. Deux points non documentés, trouvés à l'écran : l'animation
+se déclenche sur `max_chars` et seulement là, et un `label.width` fixe l'empêche
+complètement de démarrer. Seul le texte réellement tronqué s'anime, donc un
+titre court reste immobile.
+
+Les `max_chars` des deux lignes sont accordés pour qu'elles occupent une largeur
+proche : l'artiste ne comptant pas dans le flux horizontal, un nom sensiblement
+plus long déborderait sur le compteur.
 
 SketchyBar sait normalement faire cela nativement, via l'événement
 `media_change` et l'image intégrée `media.artwork`. Les deux sont inutilisables

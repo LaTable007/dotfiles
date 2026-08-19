@@ -55,10 +55,16 @@ local artist = sbar.add("item", "media.artist", {
   position = "center",
   drawing = "off",
   width = 0,
+  -- Un label plus long que sa largeur défile au lieu d'être coupé.
+  scroll_texts = "on",
   icon = { drawing = "off" },
   label = {
     font = "SF Pro:Semibold:9.0",
     color = colors.GREY,
+    -- Le défilement se déclenche sur max_chars, et seulement là : avec un
+    -- label.width fixe l'animation ne part jamais, vérifié à l'écran.
+    max_chars = 24,
+    scroll_duration = 180,
     y_offset = 7,
     padding_left = 6,
     padding_right = 0,
@@ -68,14 +74,16 @@ local artist = sbar.add("item", "media.artist", {
 local title_item = sbar.add("item", "media.title", {
   position = "center",
   drawing = "off",
+  scroll_texts = "on",
   icon = { drawing = "off" },
   label = {
     font = "SF Pro:Bold:11.0",
+    max_chars = 20,
+    scroll_duration = 180,
     color = colors.FG1,
-    -- Largeur fixe, et non dynamique : l'artiste ne compte pas dans le flux,
-    -- donc un nom plus long que le titre déborderait sur le compteur. Elle fige
-    -- aussi la cellule, qui ne saute plus à chaque changement de piste.
-    width = 140,
+    -- max_chars des deux lignes sont accordés pour qu'elles occupent une
+    -- largeur proche : l'artiste ne compte pas dans le flux horizontal, donc
+    -- s'il était sensiblement plus long il déborderait sur le compteur.
     y_offset = -5,
     padding_left = 6,
     padding_right = 2,
@@ -101,18 +109,6 @@ local track = { title = nil, slot = 0 }
 local player = { position = 0, duration = 0, playing = false, synced_at = 0, known = false }
 local pending = { meta = false, position = false }
 local tick = 0
-
--- max_chars de SketchyBar coupe net, sans rien signaler : la troncature passe
--- pour un bug d'affichage. On coupe donc ici, avec une ellipse. utf8.offset
--- plutôt qu'un sous-chaînage d'octets, sinon une lettre accentuée serait
--- tranchée en deux.
-local function ellipsize(str, limit)
-  local length = utf8.len(str)
-  if not length or length <= limit then
-    return str
-  end
-  return str:sub(1, utf8.offset(str, limit) - 1) .. "\u{2026}"
-end
 
 local function format_time(seconds)
   seconds = math.max(0, math.floor(seconds))
@@ -227,10 +223,10 @@ local function sync_metadata()
     end
 
     cover:set({ drawing = "on" })
-    title_item:set({ drawing = "on", label = { string = ellipsize(title, 22) } })
+    title_item:set({ drawing = "on", label = { string = title } })
     artist:set({
       drawing = "on",
-      label = { string = (artist_name ~= "" and artist_name ~= "null") and ellipsize(artist_name, 24) or "" },
+      label = { string = (artist_name ~= "" and artist_name ~= "null") and artist_name or "" },
     })
 
     if title ~= track.title then
