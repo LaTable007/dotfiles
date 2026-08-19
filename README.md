@@ -322,6 +322,21 @@ rectangle gris autour du tracé. Le remplissage sous la courbe reprend la teinte
 du tracé à un quart d'opacité, l'alpha étant l'octet de poids fort d'une couleur
 `0xAARRGGBB`.
 
+### Calendrier
+
+Un clic sur la date ouvre le mois courant, construit en Lua plutôt que repris de
+`cal`, pour maîtriser l'alignement et marquer le jour.
+
+Les cellules font trois caractères et le jour courant est préfixé d'un point :
+`•19` tient dans la même largeur que ` 19`, donc marquer le jour ne décale
+aucune colonne. Un encadrement `[19]` aurait demandé un caractère de plus par
+cellule, et les dernières colonnes sortaient alors de l'écran.
+
+Le popup est ancré à droite et non centré : l'item date touche le bord de
+l'écran, et un popup centré sur lui déborde. Le dernier jour du mois vient de
+`os.time` sur le jour 0 du mois suivant, ce qui évite une table des longueurs de
+mois et le cas des années bissextiles.
+
 ### Item réseau
 
 Repris de l'item réseau de la configuration de l'auteur de SketchyBar, avec une
