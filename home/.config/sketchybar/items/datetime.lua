@@ -79,36 +79,48 @@ local function build_calendar(now)
 
   local lines = {
     MONTHS[t.month] .. " " .. t.year,
-    " Lu Ma Me Je Ve Sa Di",
+    "Lu Ma Me Je Ve Sa Di",
   }
 
-  local week, filled = {}, 0
-  for _ = 1, offset do
-    table.insert(week, "   ")
-    filled = filled + 1
-  end
+  -- Cellules cadrées à gauche, et non à droite : SketchyBar n'affiche rien
+  -- d'une étiquette qui commence par des espaces, ce qui effaçait la première
+  -- semaine du mois et décalait les lignes de jours à un chiffre. Aucune ligne
+  -- ne commence donc plus par une espace.
+  local week = {}
+  -- La première semaine est incomplète : elle ne porte que les jours qui
+  -- suivent le décalage. Les suivantes font sept jours pleins.
+  local capacity = 7 - offset
   for day = 1, last.day do
-    table.insert(week, day == t.day and (" " .. circled(day)) or string.format("%3d", day))
-    filled = filled + 1
-    if filled == 7 then
+    table.insert(week, day == t.day and (circled(day) .. " ") or string.format("%-3d", day))
+    if #week == capacity then
       table.insert(lines, table.concat(week))
-      week, filled = {}, 0
+      week = {}
+      capacity = 7
     end
   end
-  if filled > 0 then
+  if #week > 0 then
     table.insert(lines, table.concat(week))
   end
-  return lines
+
+  -- Le décalage de la première semaine est rendu par une marge en pixels, pour
+  -- la même raison : des cellules vides en tête d'étiquette ne s'afficheraient
+  -- pas. La première semaine est la ligne 3, après le titre et les jours.
+  return lines, offset
 end
 
+-- Largeur d'une cellule de trois caractères en SF Mono 11, mesurée à l'écran.
+local CELL_WIDTH = 20
+local BASE_PADDING = 10
+
 local function fill_calendar()
-  local lines = build_calendar(os.time())
+  local lines, offset = build_calendar(os.time())
   for i = 1, CALENDAR_ROWS do
     local line = lines[i]
     rows[i]:set({
       drawing = line and "on" or "off",
       label = {
         string = line or "",
+        padding_left = (i == 3) and (BASE_PADDING + offset * CELL_WIDTH) or BASE_PADDING,
         -- En-tête en jaune, comme l'icône de l'item : le popup se rattache
         -- visuellement à ce qui l'a ouvert.
         color = i == 1 and colors.YELLOW or colors.FG1,
