@@ -45,13 +45,41 @@ local cover = sbar.add("item", "media.cover", {
   },
 })
 
-local info = sbar.add("item", "media.info", {
+-- Artiste et titre sont deux items superposés plutôt qu'une seule ligne.
+-- L'artiste porte width = 0, donc il n'occupe aucune place dans le flux
+-- horizontal : son label déborde et se dessine par-dessus le titre, ajouté
+-- juste après et qui, lui, fixe la largeur de la cellule. Les y_offset
+-- opposés les séparent verticalement. C'est ainsi qu'on tient deux lignes
+-- dans une barre de 34 px sans doubler l'encombrement.
+local artist = sbar.add("item", "media.artist", {
+  position = "center",
+  drawing = "off",
+  width = 0,
+  icon = { drawing = "off" },
+  label = {
+    font = "SF Pro:Semibold:9.0",
+    color = colors.GREY,
+    y_offset = 7,
+    padding_left = 6,
+    padding_right = 0,
+  },
+})
+
+local title_item = sbar.add("item", "media.title", {
   position = "center",
   drawing = "off",
   icon = { drawing = "off" },
-  -- Titre seul, sans l'artiste : la pochette juste à gauche le donne déjà,
-  -- et le couple faisait déborder la cellule sur la moitié de la barre.
-  label = { max_chars = 24, padding_left = 6, padding_right = 2 },
+  label = {
+    font = "SF Pro:Bold:11.0",
+    color = colors.FG1,
+    -- Largeur fixe, et non dynamique : l'artiste ne compte pas dans le flux,
+    -- donc un nom plus long que le titre déborderait sur le compteur. Elle fige
+    -- aussi la cellule, qui ne saute plus à chaque changement de piste.
+    width = 140,
+    y_offset = -5,
+    padding_left = 6,
+    padding_right = 2,
+  },
 })
 
 local time = sbar.add("item", "media.time", {
@@ -61,7 +89,7 @@ local time = sbar.add("item", "media.time", {
   label = { font = "SF Mono:Regular:11.0", color = colors.GREY, padding_right = 8 },
 })
 
-sbar.add("bracket", "media", { cover.name, info.name, time.name }, {
+sbar.add("bracket", "media", { cover.name, artist.name, title_item.name, time.name }, {
   background = {
     color = colors.PILL_BG,
     corner_radius = 10,
@@ -74,6 +102,18 @@ local player = { position = 0, duration = 0, playing = false, synced_at = 0, kno
 local pending = { meta = false, position = false }
 local tick = 0
 
+-- max_chars de SketchyBar coupe net, sans rien signaler : la troncature passe
+-- pour un bug d'affichage. On coupe donc ici, avec une ellipse. utf8.offset
+-- plutôt qu'un sous-chaînage d'octets, sinon une lettre accentuée serait
+-- tranchée en deux.
+local function ellipsize(str, limit)
+  local length = utf8.len(str)
+  if not length or length <= limit then
+    return str
+  end
+  return str:sub(1, utf8.offset(str, limit) - 1) .. "\u{2026}"
+end
+
 local function format_time(seconds)
   seconds = math.max(0, math.floor(seconds))
   return string.format("%d:%02d", math.floor(seconds / 60), seconds % 60)
@@ -83,7 +123,8 @@ local function hide()
   track.title = nil
   player.known = false
   cover:set({ drawing = "off" })
-  info:set({ drawing = "off" })
+  artist:set({ drawing = "off" })
+  title_item:set({ drawing = "off" })
   time:set({ drawing = "off" })
 end
 
@@ -174,7 +215,7 @@ local function sync_metadata()
     for line in out:gmatch("([^\r\n]*)\r?\n?") do
       table.insert(fields, (line:gsub("%s+$", "")))
     end
-    local title, bundle = fields[1], fields[3]
+    local title, artist_name, bundle = fields[1], fields[2], fields[3]
 
     -- Rien à afficher dans deux cas : aucune application ne diffuse, auquel cas
     -- nowplaying-cli renvoie "null", ou la source n'est pas Music. Un
@@ -186,7 +227,11 @@ local function sync_metadata()
     end
 
     cover:set({ drawing = "on" })
-    info:set({ drawing = "on", label = { string = title } })
+    title_item:set({ drawing = "on", label = { string = ellipsize(title, 22) } })
+    artist:set({
+      drawing = "on",
+      label = { string = (artist_name ~= "" and artist_name ~= "null") and ellipsize(artist_name, 24) or "" },
+    })
 
     if title ~= track.title then
       track.title = title

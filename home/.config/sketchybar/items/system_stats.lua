@@ -7,6 +7,23 @@ local colors = require("colors")
 -- unlike Nerd Font icon glyphs which can look similar to each other at a glance.
 local tag_font = "SF Pro:Heavy:10.0"
 
+-- CPU et RAM sont des graphes plutôt que du texte seul : le pourcentage dit
+-- l'instant, la courbe dit la tendance, et le pourcentage se superpose au tracé
+-- plutôt que de s'ajouter à côté, donc à encombrement égal.
+-- 40 points échantillonnés toutes les 5 s, soit un peu plus de trois minutes
+-- d'historique visible.
+local GRAPH_WIDTH = 40
+
+-- Superposé au tracé : width 0 pour que le label ne réserve aucune place, et
+-- y_offset pour le remonter au-dessus de la courbe.
+local overlay_label = {
+  font = "SF Mono:Bold:9.0",
+  align = "right",
+  width = 0,
+  y_offset = 6,
+  color = colors.FG1,
+}
+
 local temperature = sbar.add("item", "temperature", {
   position = "right",
   update_freq = 5,
@@ -14,16 +31,20 @@ local temperature = sbar.add("item", "temperature", {
   label = { color = colors.FG1 },
 })
 
-local ram = sbar.add("item", "ram", {
+local ram = sbar.add("graph", "ram", GRAPH_WIDTH, {
   position = "right",
+  graph = { color = colors.BLUE },
+  background = { height = 22, color = colors.TRANSPARENT, drawing = "on" },
   icon = { string = "RAM", font = tag_font, color = colors.BLUE },
-  label = { color = colors.FG1 },
+  label = overlay_label,
 })
 
-local cpu = sbar.add("item", "cpu", {
+local cpu = sbar.add("graph", "cpu", GRAPH_WIDTH, {
   position = "right",
+  graph = { color = colors.PURPLE },
+  background = { height = 22, color = colors.TRANSPARENT, drawing = "on" },
   icon = { string = "CPU", font = tag_font, color = colors.PURPLE },
-  label = { color = colors.FG1 },
+  label = overlay_label,
 })
 
 local function level_color(value, warn, critical)
@@ -47,18 +68,24 @@ local function refresh()
 
       -- Only the percentage (label) changes color with load; the CPU/RAM/TEMP
       -- tag (icon) keeps its fixed color so each metric stays identifiable.
+      -- Le tracé, lui, garde sa teinte : c'est le repère qui distingue les deux
+      -- courbes l'une de l'autre.
       if stats.cpu then
-        local c = level_color(stats.cpu, 60, 85)
-        cpu:set({ label = { string = string.format("%.0f%%", stats.cpu), color = c } })
+        -- push attend une valeur normalisée entre 0 et 1.
+        cpu:push({ stats.cpu / 100 })
+        cpu:set({
+          label = { string = string.format("%.0f%%", stats.cpu), color = level_color(stats.cpu, 60, 85) },
+        })
       end
       if stats.ram then
-        local c = level_color(stats.ram, 65, 85)
-        ram:set({ label = { string = string.format("%.0f%%", stats.ram), color = c } })
+        ram:push({ stats.ram / 100 })
+        ram:set({
+          label = { string = string.format("%.0f%%", stats.ram), color = level_color(stats.ram, 65, 85) },
+        })
       end
       if stats.temp then
-        local c = level_color(stats.temp, 75, 90)
         temperature:set({
-          label = { string = string.format("%.0f°C", stats.temp), color = c },
+          label = { string = string.format("%.0f°C", stats.temp), color = level_color(stats.temp, 75, 90) },
         })
       end
     end

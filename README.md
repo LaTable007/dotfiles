@@ -230,11 +230,21 @@ chemins ne donne un résultat différent, mais `aerospace.toml` fait foi.
 
 ### Lecteur média
 
-L'item central affiche la pochette, le titre de la piste et un compteur
-`position / durée` avec l'état de lecture. L'artiste est volontairement omis :
-la pochette juste à gauche le donne déjà, et le couple artiste-titre occupait
-la moitié de la barre. Pour le rétablir, reconstruire `text` à partir de
-`fields[2]` dans `sync_metadata`.
+L'item central affiche la pochette, l'artiste et le titre sur deux lignes, et
+un compteur `position / durée` avec l'état de lecture.
+
+Les deux lignes tiennent dans une barre de 34 px parce que l'item artiste porte
+`width = 0` : il ne compte pas dans le flux horizontal, son label déborde et se
+dessine par-dessus le titre, ajouté juste après et qui fixe la largeur de la
+cellule. Les `y_offset` opposés les séparent verticalement. Cette largeur est
+fixe et non dynamique, sans quoi un nom d'artiste plus long que le titre
+déborderait sur le compteur ; elle évite aussi que la cellule saute à chaque
+changement de piste.
+
+La troncature est faite en Lua, pas par `max_chars`, qui coupe net sans rien
+signaler et fait passer le résultat pour un défaut d'affichage. `utf8.offset`
+plutôt qu'un sous-chaînage d'octets, sinon une lettre accentuée serait tranchée
+en deux.
 
 SketchyBar sait normalement faire cela nativement, via l'événement
 `media_change` et l'image intégrée `media.artwork`. Les deux sont inutilisables
