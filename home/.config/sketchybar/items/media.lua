@@ -75,15 +75,17 @@ local title_item = sbar.add("item", "media.title", {
   position = "center",
   drawing = "off",
   scroll_texts = "on",
+  -- Largeur fixée sur l'item, et non sur le label : un label.width fige le
+  -- défilement, une largeur d'item non. Elle réserve la cellule, de sorte que
+  -- l'artiste, qui ne compte pas dans le flux, ne déborde plus sur le compteur
+  -- quand son nom est plus long que le titre.
+  width = 140,
   icon = { drawing = "off" },
   label = {
     font = "SF Pro:Bold:11.0",
     max_chars = 20,
     scroll_duration = 180,
     color = colors.FG1,
-    -- max_chars des deux lignes sont accordés pour qu'elles occupent une
-    -- largeur proche : l'artiste ne compte pas dans le flux horizontal, donc
-    -- s'il était sensiblement plus long il déborderait sur le compteur.
     y_offset = -5,
     padding_left = 6,
     padding_right = 2,
