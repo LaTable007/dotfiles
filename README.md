@@ -291,6 +291,31 @@ gère : tant que Python n'y est pas déclaré, `pyenv` continue de s'en occuper.
 Pour migrer, `mise use -g python@3.14` puis retirer l'appel à `pyenv init` du
 `.zshrc`.
 
+### Item réseau
+
+Repris de l'item réseau de la configuration de l'auteur de SketchyBar, avec une
+différence : plutôt qu'un simple témoin connecté / déconnecté, l'icône distingue
+une adresse privée d'une adresse publiquement routable.
+
+| Couleur | Sens |
+| --- | --- |
+| Jaune | adresse privée, derrière un NAT |
+| Orange | adresse publique, la machine est directement adressable |
+| Gris | déconnecté |
+
+Certains réseaux, universitaires notamment, attribuent une IPv4 publique
+directement à la machine. Rien dans macOS ne le signale, et le pare-feu local
+devient alors la seule protection. La détection compare les octets
+numériquement plutôt que par motif de texte, où `172.16` et `172.160` seraient
+faciles à confondre, et couvre RFC1918, loopback, lien-local et CGNAT.
+
+Un clic ouvre le détail : réseau, adresse, portée, routeur et état du pare-feu.
+Ces commandes, `networksetup` surtout, sont plus lentes que la lecture de l'IP
+et ne tournent qu'à l'ouverture du popup.
+
+L'item est événementiel, sans sondage : contrairement à `media_change`,
+l'événement `wifi_change` se déclenche bien sur macOS 26.
+
 ### Autorisation Music après une mise à jour
 
 Le compteur de position interroge Music par AppleScript, ce qui exige
