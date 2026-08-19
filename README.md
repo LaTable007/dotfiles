@@ -3,7 +3,9 @@
 Configuration macOS Apple Silicon : AeroSpace, SketchyBar, Ghostty, Neovim, tmux, zsh.
 Thème Gruvbox Dark sur l'ensemble de la pile.
 
-![screenshot](assets/screenshot.png)
+![La barre sur un espace vide](assets/screenshot.png)
+
+![Ghostty, fastfetch et starship](assets/terminal.png)
 
 ## Composants
 
@@ -21,6 +23,7 @@ Thème Gruvbox Dark sur l'ensemble de la pile.
 | Navigation de dossiers | [zoxide](https://github.com/ajeetdsouza/zoxide) |
 | Gestionnaire de fichiers | [yazi](https://github.com/sxyazi/yazi) |
 | Versions de langages | [mise](https://github.com/jdx/mise) |
+| Résumé système | [fastfetch](https://github.com/fastfetch-cli/fastfetch) |
 | Pager git | [delta](https://github.com/dandavison/delta) |
 | Métriques CPU/GPU | [macmon](https://github.com/vladkens/macmon) |
 
@@ -397,6 +400,14 @@ et ne tournent qu'à l'ouverture du popup.
 
 L'item est événementiel, sans sondage : contrairement à `media_change`,
 l'événement `wifi_change` se déclenche bien sur macOS 26.
+
+### fastfetch et l'adresse locale
+
+Le module `localip` est retiré du preset. `fastfetch` s'exécute à chaque
+ouverture de shell, donc l'adresse se retrouvait sur toute capture d'écran du
+terminal. Sur un réseau domestique elle est privée et sans intérêt, mais
+certains réseaux attribuent une IPv4 publique directement à la machine — l'item
+réseau la signale alors en orange — et elle serait partie dans ce dépôt.
 
 ### Autorisation Music après une mise à jour
 
