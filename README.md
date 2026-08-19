@@ -366,6 +366,32 @@ l'écran, et un popup centré sur lui déborde. Le dernier jour du mois vient de
 `os.time` sur le jour 0 du mois suivant, ce qui évite une table des longueurs de
 mois et le cas des années bissextiles.
 
+### Icônes d'applications et noms localisés
+
+`helpers/icon_map.lua` associe un nom d'application au glyphe correspondant de
+la police sketchybar-app-font. La table est générée depuis les *mappings* de
+[kvndrsslr/sketchybar-app-font](https://github.com/kvndrsslr/sketchybar-app-font)
+(CC0), en y ajoutant une section de traductions françaises absentes en amont.
+
+Le point à connaître : AeroSpace transmet le nom **affiché** par macOS, donc
+localisé — « Musique », « Aperçu », « Réglages Système ». La table amont couvre
+déjà une partie de ces traductions, mais pas toutes.
+
+Second piège, plus discret : ces noms arrivent en forme composée (NFC), alors
+que `mdls` les renvoie décomposés (NFD). Les deux formes s'affichent
+identiquement mais ne sont pas égales octet à octet, ce qui fait passer une
+entrée pour absente alors qu'elle est présente. Toute liste servant à vérifier
+la couverture doit donc être normalisée en NFC.
+
+Pour régénérer la table :
+
+```bash
+git clone --depth 1 https://github.com/kvndrsslr/sketchybar-app-font
+```
+
+puis convertir `mappings/` en paires nom → glyphe, et réappliquer la section
+française.
+
 ### Item réseau
 
 Repris de l'item réseau de la configuration de l'auteur de SketchyBar, avec une

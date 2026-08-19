@@ -32,7 +32,8 @@ local ARTIST_MAX = 24
 
 -- Marge gauche du label, plus un espace avant le compteur : sans elle, la
 -- cellule s'arrête pile à la fin du texte et le titre touche le chronomètre.
-local TEXT_GUTTER = 16
+-- Réglée pour que cet espace égale celui qui sépare la pochette du texte.
+local TEXT_GUTTER = 9
 
 -- Estimation de la largeur d'un texte, en fractions du corps de la police.
 -- Une moyenne unique par caractère ne suffit pas : SF Pro est proportionnelle,
@@ -44,8 +45,10 @@ local WIDE = "[MWmw@]"
 local UPPER_OR_DIGIT = "[A-Z0-9]"
 
 -- Le titre est en gras et l'artiste en demi-gras : à corps égal le gras est
--- plus large. Le facteur a été calé sur des largeurs relevées à l'écran.
-local BOLD = 1.15
+-- plus large. Facteurs recalés sur des largeurs relevées à l'écran ; les
+-- précédents surévaluaient jusqu'à 19 % sur un titre en capitales, ce qui
+-- creusait l'écart avant le compteur.
+local BOLD = 1.06
 local SEMIBOLD = 1.0
 
 local function text_width(text, size, weight, max_chars)
@@ -66,7 +69,7 @@ local function text_width(text, size, weight, max_chars)
     elseif char:match(WIDE) then
       factor = 1.05
     elseif char:match(UPPER_OR_DIGIT) then
-      factor = 0.73
+      factor = 0.66
     else
       factor = 0.61
     end
